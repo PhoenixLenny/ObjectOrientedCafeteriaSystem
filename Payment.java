@@ -4,14 +4,12 @@ public class Payment {
     private String method;
     private String status = "Pending";
 
-    // Constructor
     public Payment(int paymentId, double amount, String method) {
         this.paymentId = paymentId;
         this.amount = amount;
         this.method = method;
     }
 
-    // Getters (No setters for immutability where possible)
     public int getPaymentId() { return paymentId; }
     public double getAmount() { return amount; }
     public String getMethod() { return method; }
@@ -29,4 +27,5 @@ public class Payment {
     public String getReceipt() {
         return "Payment ID: " + paymentId + ", Amount: $" + amount + ", Status: " + status;
     }
+
 }

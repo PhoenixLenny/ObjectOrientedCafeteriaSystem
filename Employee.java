@@ -3,14 +3,12 @@ public class Employee {
     private String name;
     private String role;
 
-    // Constructor
     public Employee(int employeeId, String name, String role) {
         this.employeeId = employeeId;
         this.name = name;
         this.role = role;
     }
 
-    // Getters and Setters
     public int getEmployeeId() { return employeeId; }
     public String getName() { return name; }
     public String getRole() { return role; }
@@ -33,4 +31,5 @@ public class Employee {
         // Proxy to DB update
         DatabaseManager.updateMenuItem(item);
     }
+
 }

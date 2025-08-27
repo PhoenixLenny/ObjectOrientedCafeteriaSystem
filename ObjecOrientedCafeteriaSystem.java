@@ -1,67 +1,26 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+public class Main {
+    public static void main(String[] args) {
+        DatabaseManager.createMenuItem("Burger", 5.99, "Tasty burger", "Food");
+        DatabaseManager.readMenuItems();
+        FoodItem burger = new FoodItem(1, "Burger", 6.99, "Updated burger", 500, true);
+        DatabaseManager.updateMenuItem(burger);
+        DatabaseManager.readMenuItems();
+        DatabaseManager.deleteMenuItem(1);
 
-public class DatabaseManager {
-    private static final String URL = "jdbc:mysql://localhost:3306/cafeteria_db";
-    private static final String USER = "phoenix";
-    private static final String PASS = "12345678";
+        FoodItem pizza = new FoodItem(2, "Pizza", 8.99, "Cheese pizza", 800, true);
+        Beverage coffee = new Beverage(3, "Coffee", 2.99, "Black coffee", "medium", true);
 
-    private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASS);
+        Order order = new Order(101, "John Doe");
+        order.addItem(pizza);
+        order.addItem(coffee);
+        order.calculateTotal();
+        System.out.println("Total: $" + order.getTotalAmount());
+
+        Employee cashier = new Employee(1, "Alice", "Cashier");
+        cashier.processOrder(order);
+
+        Payment payment = new Payment(201, order.getTotalAmount(), "Card");
+        payment.processPayment(12.0);
+        System.out.println(payment.getReceipt());
     }
-
-    public static void createMenuItem(String name, double price, String description, String type) {
-        String sql = "INSERT INTO menu_items (name, price, description, type) VALUES (?, ?, ?, ?)";
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setDouble(2, price);
-            pstmt.setString(3, description);
-            pstmt.setString(4, type);
-            pstmt.executeUpdate();
-            System.out.println("Item created.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void readMenuItems() {
-        String sql = "SELECT * FROM menu_items";
-        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id") + ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateMenuItem(MenuItem item) {
-        String sql = "UPDATE menu_items SET name = ?, price = ?, description = ? WHERE id = ?";
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, item.getName());
-            pstmt.setDouble(2, item.getPrice());
-            pstmt.setString(3, item.getDescription());
-            pstmt.setInt(4, item.getItemId());
-            pstmt.executeUpdate();
-            System.out.println("Item updated.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void deleteMenuItem(int id) {
-        String sql = "DELETE FROM menu_items WHERE id = ?";
-        try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.executeUpdate();
-            System.out.println("Item deleted.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
